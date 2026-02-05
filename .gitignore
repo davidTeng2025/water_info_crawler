@@ -1,6 +1,4 @@
 # 输出与数据
-output/*.xlsx
-output/*.db
 output/geo_cache.json
 # Python
 __pycache__/

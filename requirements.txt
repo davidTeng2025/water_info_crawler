@@ -1,0 +1,9 @@
+playwright>=1.40.0
+pandas>=2.0.0
+openpyxl>=3.1.0
+
+# geo_search.py / water_db.py：地理编码使用高德 AMAP_KEY，无 geopy 依赖
+flask>=3.0.0   # --serve 启动 HTTP 接口时使用
+
+# water_db.py KD-tree 最近邻
+scipy>=1.10.0

@@ -1,0 +1,41 @@
+{
+  "url": "https://szzdjc.cnemc.cn:8070/GJZ/Business/Publish/Main.html",
+  "links": [],
+  "buttons": [
+    {
+      "tag": "A",
+      "text": "×",
+      "onclick": "javascript:/*artDialog*/;",
+      "id": null,
+      "className": "aui_close"
+    }
+  ],
+  "tables": [
+    {
+      "index": 0,
+      "rowCount": 6,
+      "firstRowCells": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "index": 1,
+      "rowCount": 3,
+      "firstRowCells": [
+        "消息最小化最大化×"
+      ]
+    }
+  ],
+  "iframes": [
+    {
+      "index": 0,
+      "src": "RealDatas.html",
+      "id": "MF"
+    }
+  ],
+  "raw_html_summary": null,
+  "title": "国家水质自动综合监管平台",
+  "body_text_sample": "\t\t\n\t\n消息\n×\n\n\nloading..\n\n\n\t\n\t\t\n实时数据 发布说明\n \n版权所有：中国环境监测总站 "
+}

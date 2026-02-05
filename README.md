@@ -17,14 +17,27 @@
 
 - Python 3.8+
 - Chromium（由 `playwright install chromium` 安装）
-- **推荐**：使用项目配套的 conda 环境 `water_crawler`，已包含 Playwright 所需库（atk、at-spi2-atk、xorg-libxdamage 等），激活时会自动设置 `LD_LIBRARY_PATH`，无需再装系统依赖。
+- **推荐**：使用项目根目录的 **environment.yml** 创建 conda 环境 `water_crawler`，已包含 atk、xorg 等 Playwright 所需系统库，可避免缺 libatk/libXdamage 等依赖问题（见下方「安装」）。
 - 若不用 conda、且 Chromium 报错缺少 `libatk-1.0` 等，可安装系统依赖后重试，例如：
   - Ubuntu/Debian: `sudo apt-get install -y libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2`
   - 或在本地/有完整图形库的环境中运行
 
 ## 安装
 
-### 方式一：使用 conda 环境（推荐，已解决 libatk/libXdamage 等依赖）
+### 方式一：从 environment.yml 创建 conda 环境（推荐，一键复现）
+
+项目根目录提供 **environment.yml**（由 conda 环境 `water_crawler` 导出），包含 Python、atk/xorg 等系统库及 pip 依赖，可避免 Chromium 缺 libatk 等问题。
+
+```bash
+cd water_info_crawler
+conda env create -f environment.yml
+conda activate water_crawler
+playwright install chromium
+```
+
+若环境已存在需重建：`conda env remove -n water_crawler` 后再执行上述 `conda env create` 与后续步骤。
+
+### 方式二：手动创建 conda 环境
 
 ```bash
 conda create -n water_crawler python=3.11 -y
@@ -34,15 +47,15 @@ pip install -r requirements.txt
 playwright install chromium
 ```
 
-环境内已配置激活脚本，激活 `water_crawler` 后会自动设置 `LD_LIBRARY_PATH`，无需再手动设置。
-
-### 方式二：仅 pip
+### 方式三：仅 pip
 
 ```bash
 cd water_info_crawler
 pip install -r requirements.txt
 playwright install chromium
 ```
+
+若 Chromium 报错缺少 `libatk-1.0` 等，请用方式一或方式二，或安装系统依赖（见上方「环境要求」）。
 
 ## 使用
 

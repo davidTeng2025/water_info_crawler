@@ -7,6 +7,25 @@ description: Crawls the national water quality monitoring platform (CN), exports
 
 本 Skill 指导 Agent 在本项目中执行：页面分析、抓取、Excel 导出、地理编码、SQLite 入库与按地名最近邻查询。**所有可执行脚本位于 `scripts/`，请在项目根目录执行命令。**
 
+## 环境构建（conda）
+
+项目根目录提供 **environment.yml**（由 conda 环境 `water_crawler` 导出）。导入并构建同名虚拟环境步骤：
+
+1. **创建环境**（在项目根目录执行）：
+   ```bash
+   conda env create -f environment.yml
+   ```
+2. **激活环境**：
+   ```bash
+   conda activate water_crawler
+   ```
+3. **安装 Chromium**（抓取依赖）：
+   ```bash
+   playwright install chromium
+   ```
+
+若环境已存在需重建，可先删除再创建：`conda env remove -n water_crawler`，再执行步骤 1～3。
+
 ## 何时使用
 
 - 用户需要抓取/更新国家水质自动综合监管平台数据

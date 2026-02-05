@@ -1,6 +1,6 @@
-# 国家水质自动综合监管平台 - 数据抓取项目
+# 水质数据抓取项目
 
-通过模拟点击抓取 [国家水质自动综合监管平台](https://szzdjc.cnemc.cn:8070/GJZ/Business/Publish/Main.html) 的页面数据，并保存为 Excel 表格。
+通过模拟点击抓取权威平台的水质数据，并保存为 Excel 表格。
 
 本项目采用 **Agent Skill 结构**：根目录为技能说明（[SKILL.md](SKILL.md)），可执行脚本在 `scripts/`，输出在 `output/`。在 Cursor 中打开本仓库时，Agent 会按根目录 [SKILL.md](SKILL.md) 执行抓取、入库、按地名查询等操作。
 

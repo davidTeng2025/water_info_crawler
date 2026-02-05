@@ -40,7 +40,7 @@ description: Crawls the national water quality monitoring platform (CN), exports
 |-----|------|
 | 分析页面结构 | `python scripts/analyze_page.py` → 结果在 `output/page_structure.json` |
 | 抓取并导出 Excel | `python scripts/main.py`（test 仅全国；prod 需 `WATER_CRAWLER_MODE=prod` 或改 `config.RUN_MODE`） |
-| 全量更新 DB（抓取+地理编码+入库） | `python scripts/water_db.py update [--scheme amap\|offline]` |
+| 全量更新 DB（抓取+地理编码+入库） | `python scripts/water_db.py update [--scheme amap]` |
 | 跳过抓取、仅从已有 Excel 入库 | `python scripts/water_db.py update --skip-crawl [--scheme amap]` |
 | 按地名查最近 N 条（完整数据） | `python scripts/water_db.py query --place "地名" [--top 10] [--scheme amap]` |
 | 启动最近邻 HTTP 接口 | `python scripts/water_db.py serve [--port 5001]` → `GET /nearest?place=地名&top=5` |

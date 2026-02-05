@@ -92,7 +92,7 @@ python scripts/main.py
 
 - **地理编码方案**：`amap`（高德，需环境变量 `AMAP_KEY`）、`offline`（本地 CSV：`output/geo_cache.csv`，列 `address,lat,lon`）。
 - **首次或数据更新后**：`python scripts/geo_search.py --build-cache [--scheme amap|offline]` 构建坐标缓存。
-- **按地名查最近 N 条**：`python scripts/geo_search.py "郑州市" --top 10 [--scheme amap|offline]`。
+- **按地名查最近 N 条**：`python scripts/geo_search.py "郑州市" --top 10 [--scheme amap]`。
 - **启动 HTTP 接口**：`python scripts/geo_search.py --serve --port 5000`，访问 `http://127.0.0.1:5000/nearest?place=郑州&top=5`。
 
 依赖：环境变量 `AMAP_KEY`（高德 Web 服务 key）；可选 `flask`（`--serve`）。
@@ -105,8 +105,8 @@ python scripts/main.py
 |------|------|
 | `python scripts/water_db.py init [--db output/water_data.db]` | 仅建表，不抓取、不导入数据。 |
 | `python scripts/water_db.py update [--scheme amap\|offline]` | 全量更新：执行 prod 抓取 → 地理编码 → 写库并原子切换。 |
-| `python scripts/water_db.py update --skip-crawl [--scheme amap\|offline]` | 跳过抓取，仅从已有 `output/water_info_*.xlsx` 做地理编码与入库（数据已抓完时使用）。 |
-| `python scripts/water_db.py query --place "地名" [--top 10] [--scheme amap\|offline]` | 命令行最近邻查询，返回距离该地名最近的水质断面。 |
+| `python scripts/water_db.py update --skip-crawl [--scheme amap]` | 跳过抓取，仅从已有 `output/water_info_*.xlsx` 做地理编码与入库（数据已抓完时使用）。 |
+| `python scripts/water_db.py query --place "地名" [--top 10] [--scheme amap]` | 命令行最近邻查询，返回距离该地名最近的水质断面。 |
 | `python scripts/water_db.py serve [--port 5001]` | 启动 HTTP 接口，GET `/nearest?place=地名&top=5&scheme=amap` 查询最近邻。 |
 
 **示例**：数据已存在于 `output/` 时只做入库：

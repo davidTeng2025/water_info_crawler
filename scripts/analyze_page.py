@@ -6,7 +6,12 @@
 import asyncio
 import json
 import os
+import sys
 from pathlib import Path
+
+_SCRIPT_DIR = Path(__file__).resolve().parent
+if str(_SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPT_DIR))
 
 try:
     from playwright.async_api import async_playwright
@@ -136,7 +141,7 @@ async def analyze():
 
 
 def main():
-    os.chdir(Path(__file__).resolve().parent)
+    os.chdir(Path(__file__).resolve().parent.parent)  # 项目根，output 在根目录下
     asyncio.run(analyze())
 
 

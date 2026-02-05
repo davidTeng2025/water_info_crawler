@@ -3,6 +3,5 @@ output/geo_cache.json
 # Python
 __pycache__/
 *.py[cod]
-.env
 .venv/
 venv/

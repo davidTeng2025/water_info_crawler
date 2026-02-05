@@ -74,10 +74,10 @@ import os
 import sys
 from pathlib import Path
 
-# 项目根目录
-ROOT = Path(__file__).resolve().parent
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+# 脚本目录加入 path，便于同目录 import
+_SCRIPT_DIR = Path(__file__).resolve().parent
+if str(_SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPT_DIR))
 
 import config
 

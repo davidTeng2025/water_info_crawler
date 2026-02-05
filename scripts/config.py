@@ -4,6 +4,10 @@ import glob
 import os
 from pathlib import Path
 
+# 项目根目录（本文件在 scripts/ 下，parent.parent = 根目录），输出目录固定为根目录/output
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+OUTPUT_DIR = str(_PROJECT_ROOT / "output")
+
 # 目标站点
 BASE_URL = "https://szzdjc.cnemc.cn:8070/GJZ/Business/Publish/Main.html"
 
@@ -83,4 +87,4 @@ MIN_TABLE_COLS = 2  # 至少列数
 
 # 输出
 OUTPUT_EXCEL = "water_info_data.xlsx"
-OUTPUT_DIR = "output"  # 相对项目根目录
+# OUTPUT_DIR 已在本文件顶部设为 项目根/output

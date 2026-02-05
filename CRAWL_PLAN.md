@@ -49,9 +49,9 @@
 ## 技术选型
 - **浏览器自动化**: Playwright（支持 Chromium，可处理证书与动态内容）
 - **Excel 导出**: openpyxl + pandas
-- **配置**: 选择器与 URL 写在 config.py，便于站点改版后调整
+- **配置**: 选择器与 URL 写在 scripts/config.py，便于站点改版后调整
 
 ## 风险与应对
 - **HTTPS 证书**: 若遇证书错误，Playwright 可设置 `ignore_https_errors=True`
-- **登录**: 当前为公开页面，若需登录则需在 config 中配置账号或 Cookie
+- **登录**: 当前为公开页面，若需登录则需在 scripts/config.py 中配置账号或 Cookie
 - **反爬**: 控制请求间隔，使用单浏览器会话，不并发

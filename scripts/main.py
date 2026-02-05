@@ -9,11 +9,12 @@ import re
 import sys
 from pathlib import Path
 
-# 保证在项目根目录运行
-ROOT = Path(__file__).resolve().parent
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
-os.chdir(ROOT)
+# 保证脚本目录在 path、工作目录为项目根（output 在根目录下）
+_SCRIPT_DIR = Path(__file__).resolve().parent
+_PROJECT_ROOT = _SCRIPT_DIR.parent
+if str(_SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPT_DIR))
+os.chdir(_PROJECT_ROOT)
 
 import config
 from crawler import run as run_crawl

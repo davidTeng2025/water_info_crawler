@@ -2,12 +2,16 @@
 
 通过模拟点击抓取 [国家水质自动综合监管平台](https://szzdjc.cnemc.cn:8070/GJZ/Business/Publish/Main.html) 的页面数据，并保存为 Excel 表格。
 
+本项目采用 **Agent Skill 结构**：根目录为技能说明（[SKILL.md](SKILL.md)），可执行脚本在 `scripts/`，输出在 `output/`。在 Cursor 中打开本仓库时，Agent 会按根目录 [SKILL.md](SKILL.md) 执行抓取、入库、按地名查询等操作。
+
 ## 功能
 
-- **页面分析**：`analyze_page.py` 打开目标页面，枚举可点击元素与表格，结果保存到 `output/page_structure.json`，便于制定/调整抓取计划。
-- **模拟点击抓取**：`crawler.py` 使用 Playwright 打开主页面，优先点击「实时数据」「发布说明」等入口，再遍历同源链接，提取所有表格与文本。
-- **Excel 导出**：`export_excel.py` 将抓取结果按页面/表格分 Sheet 写入 `output/water_info_data.xlsx`。
-- **一键运行**：`main.py` 执行抓取并导出 Excel。
+- **页面分析**：`scripts/analyze_page.py` 打开目标页面，枚举可点击元素与表格，结果保存到 `output/page_structure.json`。
+- **模拟点击抓取**：`scripts/crawler.py` 使用 Playwright 打开主页面，优先点击「实时数据」「发布说明」等入口，再遍历同源链接，提取所有表格与文本。
+- **Excel 导出**：`scripts/export_excel.py` 将抓取结果按页面/表格分 Sheet 写入 `output/water_info_data.xlsx`。
+- **一键运行**：`scripts/main.py` 执行抓取并导出 Excel。
+
+以下命令均在**项目根目录**执行。
 
 ## 环境要求
 
@@ -45,15 +49,15 @@ playwright install chromium
 ### 1. 仅分析页面结构（可选）
 
 ```bash
-python analyze_page.py
+python scripts/analyze_page.py
 ```
 
-查看 `output/page_structure.json` 中的链接、按钮、表格、iframe，必要时修改 `config.py` 中的选择器或优先点击文本。
+查看 `output/page_structure.json` 中的链接、按钮、表格、iframe，必要时修改 `scripts/config.py` 中的选择器或优先点击文本。
 
 ### 2. 执行抓取并导出 Excel
 
 ```bash
-python main.py
+python scripts/main.py
 ```
 
 结果文件：`output/water_info_data.xlsx`。
@@ -63,20 +67,20 @@ python main.py
 - **test（默认）**：仅抓取「全国」数据，写入单 sheet「水质实时数据」。
 - **prod**：按省/市逐个选择再抓取，同一批数据写入同一 sheet，并增加「一级区域」「二级区域」两列；每个区域之间间隔 `PROD_INTERVAL_MS`（默认 5 秒）防反爬。可通过 `PROD_TOP_N` 只抓前 N 个一级地域以缩短调试时间。
 
-通过环境变量切换：`WATER_CRAWLER_MODE=prod python main.py`。或在 `config.py` 中设置 `RUN_MODE = "prod"`。
+通过环境变量切换：`WATER_CRAWLER_MODE=prod python scripts/main.py`。或在 `scripts/config.py` 中设置 `RUN_MODE = "prod"`。
 
 ### 4. 调试时显示浏览器窗口
 
-在 `config.py` 中设置 `HEADLESS = False`，再运行 `python main.py`。
+在 `scripts/config.py` 中设置 `HEADLESS = False`，再运行 `python scripts/main.py`。
 
 ### 5. 按地名查最近记录（geo_search.py）
 
 在已抓取 `output/water_info_*.xlsx` 的前提下，可将数据中的位置（省份、断面名称等）转成地理坐标，并支持按地名查物理距离最近的记录。
 
 - **地理编码方案**：`amap`（高德，需环境变量 `AMAP_KEY`）、`offline`（本地 CSV：`output/geo_cache.csv`，列 `address,lat,lon`）。
-- **首次或数据更新后**：`python geo_search.py --build-cache [--scheme amap|offline]` 构建坐标缓存。
-- **按地名查最近 N 条**：`python geo_search.py "郑州市" --top 10 [--scheme amap|offline]`。
-- **启动 HTTP 接口**：`python geo_search.py --serve --port 5000`，访问 `http://127.0.0.1:5000/nearest?place=郑州&top=5`。
+- **首次或数据更新后**：`python scripts/geo_search.py --build-cache [--scheme amap|offline]` 构建坐标缓存。
+- **按地名查最近 N 条**：`python scripts/geo_search.py "郑州市" --top 10 [--scheme amap|offline]`。
+- **启动 HTTP 接口**：`python scripts/geo_search.py --serve --port 5000`，访问 `http://127.0.0.1:5000/nearest?place=郑州&top=5`。
 
 依赖：环境变量 `AMAP_KEY`（高德 Web 服务 key）；可选 `flask`（`--serve`）。
 
@@ -86,23 +90,23 @@ python main.py
 
 | 命令 | 说明 |
 |------|------|
-| `python water_db.py init [--db output/water_data.db]` | 仅建表，不抓取、不导入数据。 |
-| `python water_db.py update [--scheme amap\|offline]` | 全量更新：执行 prod 抓取 → 地理编码 → 写库并原子切换。 |
-| `python water_db.py update --skip-crawl [--scheme amap\|offline]` | 跳过抓取，仅从已有 `output/water_info_*.xlsx` 做地理编码与入库（数据已抓完时使用）。 |
-| `python water_db.py query --place "地名" [--top 10] [--scheme amap\|offline]` | 命令行最近邻查询，返回距离该地名最近的水质断面。 |
-| `python water_db.py serve [--port 5001]` | 启动 HTTP 接口，GET `/nearest?place=地名&top=5&scheme=amap` 查询最近邻。 |
+| `python scripts/water_db.py init [--db output/water_data.db]` | 仅建表，不抓取、不导入数据。 |
+| `python scripts/water_db.py update [--scheme amap\|offline]` | 全量更新：执行 prod 抓取 → 地理编码 → 写库并原子切换。 |
+| `python scripts/water_db.py update --skip-crawl [--scheme amap\|offline]` | 跳过抓取，仅从已有 `output/water_info_*.xlsx` 做地理编码与入库（数据已抓完时使用）。 |
+| `python scripts/water_db.py query --place "地名" [--top 10] [--scheme amap\|offline]` | 命令行最近邻查询，返回距离该地名最近的水质断面。 |
+| `python scripts/water_db.py serve [--port 5001]` | 启动 HTTP 接口，GET `/nearest?place=地名&top=5&scheme=amap` 查询最近邻。 |
 
 **示例**：数据已存在于 `output/` 时只做入库：
 
 ```bash
-python water_db.py update --skip-crawl --scheme amap
+python scripts/water_db.py update --skip-crawl --scheme amap
 ```
 
 查询距离「南京南京工业大学」最近的断面（命令行或 HTTP）：
 
 ```bash
-python water_db.py query --place "南京南京工业大学" --top 10 --scheme amap
-# 或先启动服务：python water_db.py serve
+python scripts/water_db.py query --place "南京南京工业大学" --top 10 --scheme amap
+# 或先启动服务：python scripts/water_db.py serve
 # 再访问：http://127.0.0.1:5001/nearest?place=南京南京工业大学&top=10&scheme=amap
 ```
 
@@ -112,7 +116,7 @@ python water_db.py query --place "南京南京工业大学" --top 10 --scheme am
 
 ## 配置说明
 
-`config.py` 中可调整：
+`scripts/config.py` 中可调整：
 
 - `RUN_MODE`：`"test"` 仅抓全国，`"prod"` 按省/市逐个抓（可由环境变量 `WATER_CRAWLER_MODE` 覆盖）。
 - `PROD_INTERVAL_MS`：prod 模式下每个区域之间的间隔（毫秒）。
@@ -124,7 +128,7 @@ python water_db.py query --place "南京南京工业大学" --top 10 --scheme am
 - `TIMEOUT_MS` / `CLICK_WAIT_MS`：超时与点击后等待时间
 - `IGNORE_HTTPS_ERRORS`：是否忽略 HTTPS 证书错误（内网或自签名证书时建议 True）
 - `PRIORITY_LINK_TEXTS`：优先点击的链接文本（如「实时数据」「发布说明」）
-- `OUTPUT_EXCEL` / `OUTPUT_DIR`：输出文件名与目录
+- `OUTPUT_EXCEL`：输出文件名；`OUTPUT_DIR` 固定为项目根目录下的 `output/`
 
 ## 抓取计划
 
@@ -132,5 +136,5 @@ python water_db.py query --place "南京南京工业大学" --top 10 --scheme am
 
 ## 注意事项
 
-- 目标站点若需登录，请在 `config.py` 中配置 Cookie 或账号，并在爬虫中增加登录步骤。
+- 目标站点若需登录，请在 `scripts/config.py` 中配置 Cookie 或账号，并在爬虫中增加登录步骤。
 - 请合理控制访问频率，避免对目标服务器造成压力。

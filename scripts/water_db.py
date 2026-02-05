@@ -10,20 +10,12 @@
   5. 无缝切换（线上无中断）：查询始终读表 water_data；更新时先写 water_data_new，再在单事务内
      DROP water_data; ALTER TABLE water_data_new RENAME TO water_data; COMMIT; 因此不会出现表为空或半新半旧。
 
-调用示例:
-  # 全量更新（抓取 + 坐标 + 写库并切换）
-  python water_db.py update [--scheme amap|offline]
-  # 跳过抓取，仅从已有 output/water_info_*.xlsx 做地理编码与入库
-  python water_db.py update --skip-crawl [--scheme amap|offline]
-
-  # 最近邻查询（KD-tree）
-  python water_db.py query --place "郑州" [--top 10] [--scheme amap]
-
-  # 仅建表
-  python water_db.py init [--db output/water_data.db]
-
-  # 启动 HTTP（GET /nearest?place=郑州&top=5）
-  python water_db.py serve [--port 5001]
+调用示例（在项目根目录执行）:
+  python scripts/water_db.py update [--scheme amap|offline]
+  python scripts/water_db.py update --skip-crawl [--scheme amap|offline]
+  python scripts/water_db.py query --place "郑州" [--top 10] [--scheme amap]
+  python scripts/water_db.py init [--db output/water_data.db]
+  python scripts/water_db.py serve [--port 5001]
 """
 from __future__ import annotations
 
@@ -33,9 +25,9 @@ import sqlite3
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+_SCRIPT_DIR = Path(__file__).resolve().parent
+if str(_SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPT_DIR))
 
 import config
 
